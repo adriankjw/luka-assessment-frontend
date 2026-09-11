@@ -41,7 +41,7 @@ export default function DocumentDetailPage() {
       {/* Top Details Header */}
       <div className="bg-white p-6 border rounded-lg shadow-sm flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Q3_Financial_Report.pdf</h1>
+          <h1 className="text-2xl font-bold text-black">Q3_Financial_Report.pdf</h1>
           <p className="text-sm text-gray-500">Current Version: {versionHistory[0].version}</p>
         </div>
         <div className="flex gap-3">
@@ -54,11 +54,11 @@ export default function DocumentDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-black">
         {/* Version History (Req 22) */}
         <div className="bg-white border rounded-lg p-5 shadow-sm space-y-4">
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <History className="w-5 h-5 text-gray-500" /> Version History
+            <History className="w-5 h-5 text-gray-500 text-black" /> Version History
           </h2>
           <ul className="divide-y text-sm">
             {versionHistory.map((ver, idx) => (
@@ -78,7 +78,7 @@ export default function DocumentDetailPage() {
         {/* Access Management Interface (Req 23) */}
         <div className="bg-white border rounded-lg p-5 shadow-sm space-y-4">
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <Shield className="w-5 h-5 text-gray-500" /> Access Management
+            <Shield className="w-5 h-5 text-gray-500 text-black" /> Access Management
           </h2>
 
           <form onSubmit={handleGrantPermission} className="flex gap-2">

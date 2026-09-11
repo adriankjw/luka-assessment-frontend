@@ -43,14 +43,14 @@ export default function WorkspacePage() {
 
       {/* Workspace Creation */}
       <form onSubmit={handleCreateWorkspace} className="bg-white p-4 border rounded-lg shadow-sm space-y-3">
-        <h2 className="text-md font-semibold text-blue-600 text-black">Create Workspace</h2>
+        <h2 className="text-md font-semibold text-black">Create Workspace</h2>
         <div className="flex gap-3">
           <input
             type="text"
             placeholder="e.g. Design Team"
             value={newWsName}
             onChange={(e) => setNewWsName(e.target.value)}
-            className="flex-1 border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
           />
           <button type="submit" className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
             <Plus className="w-4 h-4" /> Create

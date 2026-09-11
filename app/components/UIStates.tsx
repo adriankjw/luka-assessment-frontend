@@ -1,40 +1,94 @@
 // components/UIStates.tsx
 import React from 'react';
-import { AlertCircle, Lock, FolderOpen, Loader2 } from 'lucide-react';
+import { Loader2, FolderOpen, Lock, AlertTriangle, AlertCircle } from 'lucide-react';
 
-export const LoadingState = ({ message = 'Loading...' }: { message?: string }) => (
-  <div className="flex flex-col items-center justify-center p-12 text-gray-500">
-    <Loader2 className="w-8 h-8 animate-spin mb-2 text-blue-600" />
-    <p>{message}</p>
-  </div>
-);
+// 1. Loading State
+export function LoadingState({ message = 'Loading workspace data...' }: { message?: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center p-12 text-gray-900 min-h-[300px]">
+      <Loader2 className="w-8 h-8 animate-spin mb-3 text-black" />
+      <p className="font-semibold text-sm text-gray-800">{message}</p>
+    </div>
+  );
+}
 
-export const EmptyState = ({ title, description, action }: { title: string; description: string; action?: React.ReactNode }) => (
-  <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg bg-gray-50 text-center">
-    <FolderOpen className="w-12 h-12 text-gray-400 mb-3" />
-    <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-    <p className="text-sm text-gray-500 mt-1 mb-4">{description}</p>
-    {action}
-  </div>
-);
+// 2. Empty State
+export function EmptyState({
+  title = 'No items found',
+  description = 'Get started by creating a new item.',
+  action,
+}: {
+  title?: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-gray-300 rounded-lg bg-white text-center">
+      <FolderOpen className="w-12 h-12 text-gray-400 mb-3" />
+      <h3 className="text-base font-bold text-gray-900">{title}</h3>
+      <p className="text-xs text-gray-600 mt-1 mb-4">{description}</p>
+      {action}
+    </div>
+  );
+}
 
-export const UnauthorizedState = () => (
-  <div className="flex flex-col items-center justify-center p-12 text-center bg-red-50 rounded-lg border border-red-200">
-    <Lock className="w-12 h-12 text-red-500 mb-3" />
-    <h3 className="text-lg font-semibold text-red-900">Access Denied</h3>
-    <p className="text-sm text-red-600 mt-1">You do not have permission to view this resource.</p>
-  </div>
-);
+// 3. Validation Error State (Inline Callout)
+export function ValidationError({ message }: { message: string }) {
+  if (!message) return null;
+  return (
+    <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-300 rounded-md text-red-900 text-xs font-semibold">
+      <AlertCircle className="w-4 h-4 text-red-700 flex-shrink-0" />
+      <span>{message}</span>
+    </div>
+  );
+}
 
-export const ErrorState = ({ message, retry }: { message?: string; retry?: () => void }) => (
-  <div className="flex flex-col items-center justify-center p-12 text-center bg-amber-50 rounded-lg border border-amber-200">
-    <AlertCircle className="w-12 h-12 text-amber-500 mb-3" />
-    <h3 className="text-lg font-semibold text-amber-900">Something went wrong</h3>
-    <p className="text-sm text-amber-700 mt-1 mb-4">{message || 'An unexpected error occurred.'}</p>
-    {retry && (
-      <button onClick={retry} className="px-4 py-2 bg-amber-600 text-white rounded-md text-sm font-medium hover:bg-amber-700">
-        Try Again
-      </button>
-    )}
-  </div>
-);
+// 4. Unauthorized State (403 Access Denied)
+export function UnauthorizedState({ onBack }: { onBack?: () => void }) {
+  return (
+    <div className="max-w-md mx-auto my-12 p-8 text-center bg-red-50 rounded-lg border border-red-200 shadow-sm space-y-3">
+      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto text-red-800">
+        <Lock className="w-6 h-6" />
+      </div>
+      <h3 className="text-lg font-bold text-red-950">403 - Access Denied</h3>
+      <p className="text-xs text-red-800 font-medium">
+        You do not have the required permissions to view or modify this resource.
+      </p>
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="mt-2 px-4 py-2 bg-red-900 hover:bg-red-950 text-white rounded-md text-xs font-semibold transition-colors"
+        >
+          Return to Safety
+        </button>
+      )}
+    </div>
+  );
+}
+
+// 5. Unexpected Error State (500 Error with Retry)
+export function UnexpectedErrorState({
+  message = 'An unexpected server error occurred.',
+  retry,
+}: {
+  message?: string;
+  retry?: () => void;
+}) {
+  return (
+    <div className="max-w-md mx-auto my-12 p-8 text-center bg-amber-50 rounded-lg border border-amber-300 shadow-sm space-y-3">
+      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto text-amber-800">
+        <AlertTriangle className="w-6 h-6" />
+      </div>
+      <h3 className="text-lg font-bold text-amber-950">Unexpected Error</h3>
+      <p className="text-xs text-amber-800 font-medium">{message}</p>
+      {retry && (
+        <button
+          onClick={retry}
+          className="mt-2 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-md text-xs font-semibold transition-colors"
+        >
+          Try Again
+        </button>
+      )}
+    </div>
+  );
+}
