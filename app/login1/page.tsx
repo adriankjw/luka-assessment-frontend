@@ -2,45 +2,66 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 1. Handle Custom API Integration
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    // Basic validation
-    if (!email || !password) {
-      setError("Please fill in all fields.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      // Replace this with your authentication API call / NextAuth signIn
-      // e.g., await signIn('credentials', { email, password, redirect: false });
-      
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulated API delay
-      
-      console.log("Logged in with:", { email, password });
-      // Redirect on success (e.g., router.push('/dashboard'))
-    } catch (err) {
-      setError("Invalid email or password. Please try again.");
+      const response = await fetch("http://localhost:3000/authentication/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username, pass: password }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      // Handle successful authentication (e.g. save token/cookie or state)
+      console.log("Authenticated successfully:", data);
+
+      // Programmatic routing to protected route
+      router.push("/workspace");
+      router.refresh(); // Refresh route cache to apply auth state updates
+    } catch (err: any) {
+      console.log(err);
+      setError(err.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleOAuthSignIn = (provider: string) => {
-    // Implement OAuth sign in (e.g., NextAuth, Supabase, Firebase)
-    console.log(`Signing in with ${provider}...`);
+  // 2. Handle OAuth Provider Integration (e.g., NextAuth / Auth.js)
+  const handleOAuthSignIn = async (provider: string) => {
+    setIsLoading(true);
+    try {
+      // Example using NextAuth.js client SDK:
+      // import { signIn } from "next-auth/react";
+      // await signIn(provider.toLowerCase(), { callbackUrl: "/dashboard" });
+      
+      console.log(`Redirecting to ${provider} OAuth...`);
+    } catch (err) {
+      setError(`Failed to sign in with ${provider}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -71,22 +92,21 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
             >
-              Email address
+              Username
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                 <Mail className="h-5 w-5" />
               </div>
               <input
-                id="email"
-                type="email"
+                id="username"
+                type="username"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all"
               />
             </div>
@@ -100,12 +120,6 @@ export default function LoginPage() {
               >
                 Password
               </label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
-              >
-                Forgot password?
-              </Link>
             </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
